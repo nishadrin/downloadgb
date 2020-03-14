@@ -126,10 +126,12 @@ class DatabaseInteraction(StorageGeekBrainsDownloader):
     def __init__(self):
         super().__init__()
 
-    def get_login_data(self):
+    def get_login_data(self) -> dict:
+        """Get email and password."""
         pass
 
-    def get_directories(self):
+    def get_directories(self) -> list:
+        """Get directories to save files for user interface."""
         pass
 
     def get_courses(self):
