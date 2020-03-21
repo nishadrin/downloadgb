@@ -93,9 +93,6 @@ class ParseCourses():
             course_info = ParseCourseInfo(lesson).get_course()
 
             if course_info:
-                print()
-                print(course_info)
-                print()
                 all_lessons.append(course_info)
 
         return all_lessons
@@ -109,10 +106,5 @@ class ParseCourses():
 
         courses = courses.text
         loads = json.loads(courses)
-
-        file2 = os.getcwd() + '/tests2.json'
-        with open(file2, 'w') as f:
-            lessons = json.dumps(loads['data']['attendees'])
-            f.write(lessons)
 
         return loads['data']['attendees']
