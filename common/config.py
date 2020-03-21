@@ -19,7 +19,7 @@ INTERACTIVE_TYPE = 'study_group'
 # types
 WEBINARS_TYPE = 'lessons'
 VIDEOS_TYPE = 'chapters'
-# gb type on gb
+# type on gb
 GB_WEBINAR_TYPE = 'basic'
 GB_VIDEO_TYPE = 'video'
 GB_INTERACTIVE_TYPE = 'interactive'
