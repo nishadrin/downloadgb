@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 from common.config import STATES_NOT_COMPLETED_COURSES, WEBINAR_TYPE_PREFIX, \
     VIDEO_TYPE_PREFIX, VIDEOS_TYPE, WEBINARS_TYPE, INTERACTIVE_TYPE,  \
-    VIDEO_TYPE, WEBINAR_TYPE, GB_VIDEO_TYPE, GB_WEBINAR_TYPE, GB_INTERACTIVE_TYPE
+    VIDEO_TYPE, WEBINAR_TYPE, GB_VIDEO_TYPE, GB_WEBINAR_TYPE, GB_INTERACTIVE_TYPE, LESSON_STATE
 from exceptions.exceptions import SoupDataError
 
 
@@ -57,7 +57,7 @@ class ParseCourseInfo(GetCourseInfo):
     def get_course(self) -> dict:
         is_webinar, is_interactive, is_video, is_link = False, False, False, True
 
-        if self.gb_lesson.get('link') is None:
+        if self.gb_lesson.get('link') is None or self.gb_lesson.get('state') == LESSON_STATE:
             is_link = False
         elif GB_INTERACTIVE_TYPE in self.gb_lesson['courseType']:
             is_interactive = True

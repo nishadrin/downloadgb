@@ -116,19 +116,19 @@ class StorageGeekBrainsDownloader:
         """Create Material table for database."""
         __tablename__ = 'materials'
         id = Column(Integer, primary_key=True)
-        lesson_name = Column('lesson_name', ForeignKey('lessons.id'))
+        lesson = Column('lesson', ForeignKey('lessons.id'))
         link_name = Column(String)
         link = Column(String, nullable=False, unique=True)
         datetime = Column(DateTime, nullable=False)
 
-        def __init__(self, lesson_name, link_name, link):
-            self.lesson_name = lesson_name
+        def __init__(self, lesson, link_name, link):
+            self.lesson = lesson
             self.link_name = link_name
             self.link = link
             self.datetime = datetime.datetime.now()
 
         def __repr__(self):
-            return f"<Lesson({self.lesson_name}, {self.link_name}, " \
+            return f"<Lesson({self.lesson}, {self.link_name}, " \
                    f"{self.link}, {self.datetime})>"
 
 
@@ -166,27 +166,37 @@ class DatabaseInteraction(StorageGeekBrainsDownloader):
             self.session.add(lesson)
             self.session.commit()
 
-    def add_material(self, link_name, link):
+    def add_material(self, link_id, link_name, link):
         """Add material to database."""
-        material = self.session.query(self.Materials).filter_by(link=link).join(self.Lessons)
+        material = self.session.query(self.Materials).filter_by(link=link)
 
         if not material.count():
-            material = self.Materials(link_name, link)
+            lesson = self.session.query(self.Lessons).filter_by(link_id=link_id).first()
+            material = self.Materials(lesson.id, link_name, link)
 
             self.session.add(material)
-            self.session.commit()
+        else:
+            material = material.first()
+            material.link_name = link_name
+            material.link = link
+
+        self.session.commit()
 
     def update_lesson(self, link_id, lesson_name=None, announcement=None, homework=None, is_download=False, is_parse=False):
-        lesson = self.session.query(self.Lessons).filter_by(link_id=link_id)
-
+        lesson = self.session.query(self.Lessons).filter_by(link_id=link_id).first()
+        
         if lesson_name:
             lesson.lesson_name = lesson_name
         if announcement:
             lesson.announcement = announcement
+        # "<p>Здравствуйте, дорогие ученики! Мы начинаем обучение на первом курсе по языку Python. Расписание занятий вы видите на этой странице - пожалуйста, не опаздывайте на уроки. Если все-таки опоздали - после урока будут доступны видеозаписи.</p><br><p>fdsfefefsdf</p>"
         if homework:
             lesson.homework = homework
+        if is_download:
+            lesson.is_download = is_download
+        if is_parse:
+            lesson.is_parse = is_parse
 
-        self.session.add(lesson)
         self.session.commit()
 
     def get_user(self, email: str):

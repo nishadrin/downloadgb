@@ -23,6 +23,8 @@ VIDEOS_TYPE = 'chapters'
 GB_WEBINAR_TYPE = 'basic'
 GB_VIDEO_TYPE = 'video'
 GB_INTERACTIVE_TYPE = 'interactive'
+# state on gb
+LESSON_STATE = 'inactive'
 
 # database
 DATABASE_PATH = 'sqlite:///storage_gb.db3'
