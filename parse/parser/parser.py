@@ -1,3 +1,6 @@
+import requests
+from bs4 import BeautifulSoup
+
 from common.config import MAIN_LINK
 
 
@@ -10,12 +13,14 @@ class AuthorizationGeekBrains:
 
     def get_token(self):
         """Get authenticity data."""
-        self.url = f"{MAIN_LINK}login"
+        self.url = f"{MAIN_LINK}/login"
         self.connect = requests.Session()
         self.html = self.connect.get(self.url,verify=True)
         self.soup = BeautifulSoup(self.html.content, "html.parser")
+        print(self.soup)
         self.hidden_auth_token = self.soup.find(
             'input', {'name': 'authenticity_token'})['value']
+        print(self.hidden_auth_token)
 
     def authorization(self):
         """Authorize to GeekBrains."""
@@ -26,16 +31,31 @@ class AuthorizationGeekBrains:
             "user[remember_me]": "0"
             }
         self.connect.post(
-            MAIN_URL,
+            MAIN_LINK,
             data=self.login_data,
-            headers={"Referer": f"{MAIN_LINK}login"}
+            headers={"Referer": f"{self.url}"}
             )
 
     def login_gb(self):
         """Login to GeekBrains."""
-        self.get_token()
-        self.authorization()
+        try:
+            self.get_token()
+            self.authorization()
+        except ConnectionError:
+            raise ConnectionError
 
     def logout_gb(self):
         """Logout."""
         self.connect.close()
+
+
+class Parser(AuthorizationGeekBrains):
+
+    def get_soup(self, url: str) -> BeautifulSoup:
+        """Get lesson's BeautifulSoup."""
+        try:
+            html = self.connect.get(url)
+        except ConnectionError:
+            return None
+
+        return BeautifulSoup(html.content, "html.parser")

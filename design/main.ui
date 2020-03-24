@@ -111,7 +111,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="DownloadAll">
      <attribute name="title">
@@ -133,8 +133,8 @@
      <widget class="QCommandLinkButton" name="parseDownloadLinkButton">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>50</y>
+        <x>290</x>
+        <y>10</y>
         <width>191</width>
         <height>31</height>
        </rect>
@@ -146,20 +146,20 @@
      <widget class="QCommandLinkButton" name="downloadFinishLinkButton">
       <property name="geometry">
        <rect>
-        <x>300</x>
+        <x>30</x>
         <y>50</y>
         <width>191</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
-       <string>Докачать</string>
+       <string>Скачать</string>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="oneLessonDownload">
      <attribute name="title">
-      <string>Скачать один курс</string>
+      <string>Скачать один урок</string>
      </attribute>
      <widget class="QLineEdit" name="lessonLinkEdit">
       <property name="geometry">
@@ -194,7 +194,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Ссылка на курс:</string>
+       <string>Ссылка на урок:</string>
       </property>
      </widget>
      <widget class="QPushButton" name="downloadCurseButton">
@@ -207,7 +207,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Скачать курс</string>
+       <string>Скачать урок</string>
       </property>
      </widget>
     </widget>
@@ -281,7 +281,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

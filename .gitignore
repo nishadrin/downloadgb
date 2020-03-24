@@ -1,3 +1,7 @@
+common/secrets.py
+tests2.json
+storage_gb.db3
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
