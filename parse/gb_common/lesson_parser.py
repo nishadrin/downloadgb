@@ -1,6 +1,146 @@
-import json
+import abc
 
 from bs4 import BeautifulSoup
+
+from common.config import INTERACTIVE_TYPE, WEBINAR_TYPE, VIDEO_TYPE
+
+
+class LessonDirector:
+    """docstring for LessonDirector."""
+
+    def __init__(self):
+        self._lesson = None
+
+    def get_lesson(self, lesson):
+        self._lesson = lesson
+        self._lesson._get_type()
+        self._lesson._get_link_id()
+        self._lesson._get_name()
+        self._lesson._get_announcement()
+        self._lesson._get_materials()
+        self._lesson._get_homework()
+        self._lesson._get_is_parse()
+
+
+class Lesson:
+    type = ''
+    link_id = ''
+    name = ''
+    announcement = ''
+    material = dict()
+    homework = ''
+    is_parse = False
+
+
+class AbstractLesson(metaclass=abc.ABCMeta):
+    """Abstract lesson."""
+
+    def __init__(self, soup, link_id, is_parse):
+        self.lesson = Lesson()
+        self.soup = soup
+        self.link_id = link_id
+        self.is_parse = is_parse
+
+    @abc.abstractmethod
+    def _get_name(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_announcement(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_materials(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_homework(self):
+        pass
+
+    # Вилео может дублироваться в материалах, а может там не быть
+    # можеь быть много видео в интерактиве в одном уроке
+    # div id vjs_video_3
+    @abc.abstractmethod
+    def _get_video(self): # TODO
+        pass
+
+
+class BaseLesson(AbstractLesson):
+    """docstring for BaseLesson."""
+
+    def _get_link_id(self):
+        """Get link id from lesson."""
+
+        self.lesson.link_id =  self.link_id
+
+    def _get_is_parse(self):
+        """Get link id from lesson."""
+
+        self.lesson.is_parse =  self.is_parse
+
+
+    def _get_name(self):
+        """Get lesson name from lesson's html soup."""
+
+        self.lesson.name = self.soup.find("h3", {"class": "title"}).text
+
+    def _get_announcement(self):
+        """Get important announcement from lesson's html soup."""
+
+        announcement = self.soup.find("div", {"class": "lesson-content__content"})
+
+        if announcement:
+            self.lesson.announcement = announcement.text
+
+    def _get_materials(self):
+        """Get material links and names from lesson's html soup."""
+
+        materials = self.soup.findAll("li", {"class": "lesson-contents__list-item"})
+
+        for material in materials:
+            self.lesson.material[material.find("a")['href']] = material.find("a").text
+
+
+class Video(BaseLesson):
+    """Parse information from video lesson."""
+
+    def _get_type(self):
+        self.lesson.type = VIDEO_TYPE
+
+
+class Webinar(BaseLesson):
+    """Parse information from video lesson."""
+
+    def __init__(self, soup, soup_hw):
+        self.soup_hw = soup_hw
+        super().__init__(soup)
+
+    def _get_type(self):
+        self.lesson.type = WEBINAR_TYPE
+
+    def _get_homework(self):
+        """Get homework webinar's from html soup."""
+
+        homework = self.soup_hw.find("div", {"class": "task-block-teacher"})
+
+        if homework:
+            self.lesson.homework = homework.text
+
+
+class Interactive(BaseLesson):
+    """Parse information from video lesson."""
+
+    def __init__(self, soup, soup_hw):
+        self.soup_hw = soup_hw
+        super().__init__(soup)
+
+    def _get_type(self):
+        self.lesson.type = INTERACTIVE_TYPE
+
+    def _get_homework(self):
+        """Get homework interactive's from html soup."""
+
+        self.lesson.homework = self.soup_hw.find("div", {"class": "homework-description"}).text
 
 
 class LessonParser():
@@ -16,8 +156,6 @@ class LessonParser():
         self.lesson['lesson_name'] = self.soup.find("h3", {"class": "title"}).text
 
     def get_material(self):
-        # добавить отдельно сохранения видео
-        # div id vjs_video_3
         """Get material links and names from lesson's html soup."""
         href_name = dict()
         materials = self.soup.findAll("li", {"class": "lesson-contents__list-item"})
@@ -30,9 +168,11 @@ class LessonParser():
     def get_announcement(self):
         """Get important announcement from lesson's html soup."""
         announcement = self.soup.find("div", {"class": "lesson-content__content"})
-        
+
         if announcement:
             self.lesson['announcement'] = announcement.text
+
+
 
 
 class ParseVideo(LessonParser):
@@ -42,6 +182,7 @@ class ParseVideo(LessonParser):
         self.get_lesson_name()
         self.get_material()
         self.get_announcement()
+
 
         return self.lesson
 
