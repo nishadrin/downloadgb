@@ -13,6 +13,7 @@ class LessonDirector:
 
     def get_lesson(self, lesson):
         self._lesson = lesson
+
         self._lesson._get_type()
         self._lesson._get_link_id()
         self._lesson._get_name()
@@ -42,6 +43,14 @@ class AbstractLesson(metaclass=abc.ABCMeta):
         self.is_parse = is_parse
 
     @abc.abstractmethod
+    def _get_type(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_link_id(self):
+        pass
+
+    @abc.abstractmethod
     def _get_name(self):
         pass
 
@@ -55,6 +64,10 @@ class AbstractLesson(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def _get_homework(self):
+        pass
+
+    @abc.abstractmethod
+    def _get_is_parse(self):
         pass
 
     # Вилео может дублироваться в материалах, а может там не быть
